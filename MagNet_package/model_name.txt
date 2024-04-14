@@ -1,0 +1,10 @@
+MagNet_comb_N87_cycle
+MagNet_comb_3C90_cycle
+MagNet_comb_3C94_cycle
+MagNet_comb_3E6_cycle
+MagNet_comb_3F4_cycle
+MagNet_comb_77_cycle
+MagNet_comb_78_cycle
+MagNet_comb_N27_cycle
+MagNet_comb_N30_cycle
+MagNet_comb_N49_cycle
