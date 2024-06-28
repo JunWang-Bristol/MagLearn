@@ -2,11 +2,14 @@ import os
 import torch
 import torch.optim as optim
 import time
+import matplotlib.pyplot as plt
+from IPython.display import display, clear_output
 
-import NW_LSTM
+import NW_LSTM 
 import NN_DataLoader
 
-def train_model(preprocessed_training_dataset_path, material, base_mat, model_saved_name, platform, device, epochs, valid_batch_size, verbose=False, load_pretrained=False):
+
+def train_model(preprocessed_training_dataset_path, material, base_mat, model_saved_name, device, epochs, valid_batch_size, verbose=False, load_pretrained=False):
     # Instantiate the model with appropriate dimensions
     model = NW_LSTM.get_global_model().to(device)
 
@@ -47,6 +50,32 @@ def train_model(preprocessed_training_dataset_path, material, base_mat, model_sa
         valid_outputs = model(valid_inputs)
         # Compute loss
         minium_loss = loss_fn(valid_outputs, valid_targets)
+    
+    if not os.path.exists(r'Loss_Plots'):
+        os.mkdir(r'Loss_Plots')
+
+    # Initialize the live plot
+    train_losses = []
+    valid_losses = []
+    epochs_list = []
+    plt.ion()
+    fig, ax = plt.subplots()
+    ax.set_xlabel('Epoch')
+    ax.set_ylabel('Loss')
+    ax.set_xlim(0, epochs)
+
+    def update_plot(epoch, train_loss, valid_loss):
+        epochs_list.append(epoch)
+        train_losses.append(train_loss)
+        valid_losses.append(valid_loss)
+        ax.clear()
+        ax.plot(epochs_list, train_losses, label='Training Loss')
+        ax.plot(epochs_list, valid_losses, label='Validation Loss')
+        plt.title(f'Material: {material}')
+        ax.set_ylim(0, 1)
+        ax.legend()
+        clear_output(wait=True)
+        display(fig)
 
     # Train the model
     for epoch in range(epochs):
@@ -74,9 +103,15 @@ def train_model(preprocessed_training_dataset_path, material, base_mat, model_sa
                 minium_loss = valid_loss
                 torch.save(model.state_dict(), os.path.join(preprocessed_training_dataset_path, material, model_saved_name))
                 print(f"  {material} Model saved , Validation Loss: {valid_loss.item():.3e}, lr: {optimizer.param_groups[0]['lr']:.3e}")
-
+                update_plot(epoch + 1, loss.item(), valid_loss.item())  # Update live plot with new losses
         scheduler.step()
 
-        if (epoch + 1) % 10 == 0:
+        if (epoch + 1) % 10 == 0 and verbose:
             print(f"Epoch {epoch + 1}/{epochs}, Training Loss: {loss.item():.3e}, "
                   f"Remaining time for material: {t_epoch / 60 * (epochs - epoch - 1):.1f} min")
+
+    # Save and close the figure
+    plt.savefig(os.path.join('Loss_Plots', f'{material}.png', dpi=300))
+    plt.ioff()
+    plt.close()
+    
