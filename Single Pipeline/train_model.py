@@ -111,7 +111,8 @@ def train_model(preprocessed_training_dataset_path, material, base_mat, model_sa
                   f"Remaining time for material: {t_epoch / 60 * (epochs - epoch - 1):.1f} min")
 
     # Save and close the figure
-    plt.savefig(os.path.join('Loss_Plots', f'{material}.png', dpi=300))
+    figname = os.path.join('Loss_Plots', f'{material}.png')
+    plt.savefig(figname, dpi=300)
     plt.ioff()
     plt.close()
     
