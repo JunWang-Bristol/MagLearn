@@ -103,7 +103,7 @@ def train_model(preprocessed_training_dataset_path, material, base_mat, model_sa
                 minium_loss = valid_loss
                 torch.save(model.state_dict(), os.path.join(preprocessed_training_dataset_path, material, model_saved_name))
                 print(f"  {material} Model saved , Validation Loss: {valid_loss.item():.3e}, lr: {optimizer.param_groups[0]['lr']:.3e}")
-                update_plot(epoch + 1, loss.item(), valid_loss.item())  # Update live plot with new losses
+            update_plot(epoch + 1, loss.item(), valid_loss.item())  # Update live plot with new losses
         scheduler.step()
 
         if (epoch + 1) % 10 == 0 and verbose:
