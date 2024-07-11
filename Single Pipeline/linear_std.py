@@ -72,5 +72,3 @@ if __name__ == '__main__':
     a_std.load('b_std.stdd')
 
     (a_std.k, a_std.b),(b_std.k, b_std.b)
-
-

@@ -5,6 +5,7 @@ import torch.nn as nn
 import matplotlib.pyplot as plt
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
+from os.path import join
 
 import matplotlib.pyplot as plt
 
@@ -79,8 +80,7 @@ def MagLoss(
 
     idx = 0
     dataNums = magData.freq.shape[0]
-    # no more than 2000
-    if(dataNums>6000):dataNums=6000
+    if(dataNums>2000):dataNums=2000 # no more than 2000
 
     with torch.no_grad():
         x_data = x_data[idx:idx + dataNums, :, :]
@@ -150,15 +150,17 @@ def Mag_plot(material_name,relative_error,save_path=""):
         ["Avg", "95-Prct", "Max"]
     ):
         stat_val = stat_func(np.abs(relv_err))
-        y_val = get_density(stat_val,relv_err)+0.001
-        plt.plot([stat_val, stat_val], [0, y_val], '--', color="red", linewidth=1)
-        plt.text(stat_val + 0.25, y_val, f'{label}={stat_val:.2f}%', color="red", fontsize=10)
+        if stat_val<50:
+            y_val = get_density(stat_val,relv_err)+0.001
+            plt.plot([stat_val, stat_val], [0, y_val], '--', color="red", linewidth=1)
+            plt.text(stat_val + 0.25, y_val, f'{label}={stat_val:.2f}%', color="red", fontsize=10)
 
     plt.xlim(0, 50)
 
     if save_path!="":
-        plt.savefig(save_path, bbox_inches='tight')
-        print("plot saved to "+save_path)
+        path = join(save_path, material_name, 'Validation Plot.png')
+        plt.savefig(path, bbox_inches='tight', dpi=300)
+        print(f'{material_name} plot saved to ' + path)
 
 if __name__ == '__main__':
 
