@@ -46,7 +46,10 @@ class MagLoader:
                 self.freq = np.array(data['freq'])
             elif data_source=='csv':
                 self.b = np.loadtxt(material_path+r'\B_waveform[T].csv', delimiter=',').astype(np.float32)
-                self.h = np.loadtxt(material_path+r'\H_waveform[Am-1].csv', delimiter=',').astype(np.float32)
+                try:
+                    self.h = np.loadtxt(material_path+r'\H_waveform[Am-1].csv', delimiter=',').astype(np.float32)
+                except FileNotFoundError: # Handles case where H waveform is not provided, which model does not currently use anyway
+                    self.h = np.array([]).astype(np.float32)
                 self.temp = (np.loadtxt(material_path+r'\Temperature[C].csv', delimiter=',') + 273.15).astype(np.float32)
                 self.freq = np.loadtxt(material_path+r'\Frequency[Hz].csv', delimiter=',').astype(np.float32)
                 self.loss = np.loadtxt(material_path+r'\Volumetric_losses[Wm-3].csv', delimiter=',').astype(np.float32)

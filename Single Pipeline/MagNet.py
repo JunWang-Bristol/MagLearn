@@ -158,9 +158,8 @@ def Mag_plot(material_name,relative_error,save_path=""):
     plt.xlim(0, 50)
 
     if save_path!="":
-        path = join(save_path, material_name, 'Validation Plot.png')
-        plt.savefig(path, bbox_inches='tight', dpi=300)
-        print(f'{material_name} plot saved to ' + path)
+        plt.savefig(save_path, bbox_inches='tight')
+        print(f'{material_name} error distribution histogram saved to ' + save_path)
 
 if __name__ == '__main__':
 

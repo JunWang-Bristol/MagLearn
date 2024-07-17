@@ -9,18 +9,20 @@ import scipy.io as sio
 import NW_LSTM 
 import NN_DataLoader
 
-
 def train_model(
-        data_dir, 
+        data_dir,
         material, 
-        base_mat, 
-        model_saved_name, 
+        base_model_path, 
         device, 
         epochs, 
         valid_batch_size, 
-        verbose=False, 
-        load_pretrained=False
+        verbose=False,
         ):
+        
+    training_data_dir = os.path.join(data_dir, 'Processed Training Data') # Directory of pre-processed training data
+    weight_dir = os.path.join(data_dir, 'Trained Weights') # Directory where trained weights checkpoint fles will be stored
+    progress_dir = os.path.join(data_dir, 'Training Progress') # Directory that stores training loss plots and associated .MAT files to compare training regimes
+    
     # Instantiate the model with appropriate dimensions
     model = NW_LSTM.get_global_model().to(device)
 
@@ -30,13 +32,10 @@ def train_model(
         print("Total number of parameters: ", sum(p.numel() for p in model.parameters()))
 
     # Load the pre-trained model if specified
-    if load_pretrained:
-        try:
-            model.load_state_dict(torch.load(os.path.join(data_dir, base_mat, model_saved_name)))
-            print("Pre-trained model loaded")
-        except FileNotFoundError:
-            print(f"No pre-trained model found for {base_mat}, starting from scratch")
-    
+    if base_model_path != '':
+        model.load_state_dict(torch.load(base_model_path))
+        print("Pre-trained model loaded")
+
     # Define the loss function and optimizer
     # loss_fn = nn.MSELoss()
     loss_fn = NW_LSTM.RelativeLoss()
@@ -45,10 +44,10 @@ def train_model(
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=100, eta_min=0, last_epoch=-1)
 
     # Get training data loader
-    train_dataloader = NN_DataLoader.get_dataLoader(os.path.join(data_dir, material, "train.mat"), batch_size=128)
+    train_dataloader = NN_DataLoader.get_dataLoader(os.path.join(training_data_dir, material, "train.mat"), batch_size=128)
 
     # Get validation data loader
-    valid_dataloader = NN_DataLoader.get_dataLoader(os.path.join(data_dir, material, "valid.mat"), batch_size=valid_batch_size)
+    valid_dataloader = NN_DataLoader.get_dataLoader(os.path.join(training_data_dir, material, "valid.mat"), batch_size=valid_batch_size)
     valid_inputs, valid_targets = next(iter(valid_dataloader))
     valid_inputs, valid_targets = valid_inputs.to(device), valid_targets.to(device)
 
@@ -60,9 +59,6 @@ def train_model(
         valid_outputs = model(valid_inputs)
         # Compute loss
         minium_loss = loss_fn(valid_outputs, valid_targets)
-    
-    if not os.path.exists(r'Loss_Plots'):
-        os.mkdir(r'Loss_Plots')
 
     # Initialize the live plot
     train_losses = []
@@ -119,7 +115,7 @@ def train_model(
 
             if valid_loss < minium_loss:
                 minium_loss = valid_loss
-                torch.save(model.state_dict(), os.path.join(data_dir, material, model_saved_name))
+                torch.save(model.state_dict(), os.path.join(weight_dir, f'{material}.ckpt')) # Saves improved model in folder specified by weight_dir
                 print(f"  {material} Model saved , Validation Loss: {valid_loss.item():.3e}, lr: {optimizer.param_groups[0]['lr']:.3e}")
             update_plot(epoch + 1, loss.item(), valid_loss.item())  # Update live plot with new losses
         
@@ -132,8 +128,8 @@ def train_model(
                   f"Remaining time for material: {t_epoch / 60 * (epochs - epoch - 1):.1f} min")
 
     # Save and close the figure
-    figname = os.path.join(data_dir, material, 'Training_Loss_Plots.png')
-    plt.savefig(figname, dpi=300)
+    figname = os.path.join(progress_dir, f'{material}.pdf')
+    plt.savefig(figname) # Save training loss plot as a PDF
     plt.ioff()
     plt.close()
 
@@ -142,6 +138,6 @@ def train_model(
         'train_losses': train_losses,
         'validation_losses': valid_losses
     }
-    sio.savemat(os.path.join(data_dir, material, 'training_progression.mat'), losses)
+    sio.savemat(os.path.join(progress_dir, f'{material}.mat'), losses) # Save .MAT file containing datapoints used in loss plot for future replotting
     
     
