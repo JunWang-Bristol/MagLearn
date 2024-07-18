@@ -44,7 +44,7 @@ def train_model(
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=100, eta_min=0, last_epoch=-1)
 
     # Get training data loader
-    train_dataloader = NN_DataLoader.get_dataLoader(os.path.join(training_data_dir, material, "train.mat"), batch_size=128)
+    train_dataloader = NN_DataLoader.get_dataLoader(os.path.join(training_data_dir, material, "train.mat"), batch_size=valid_batch_size)
 
     # Get validation data loader
     valid_dataloader = NN_DataLoader.get_dataLoader(os.path.join(training_data_dir, material, "valid.mat"), batch_size=valid_batch_size)

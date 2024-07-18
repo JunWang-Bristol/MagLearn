@@ -10,7 +10,6 @@ from os.path import join
 import matplotlib.pyplot as plt
 
 import NW_LSTM
-import NN_DataLoader
 
 import Maglib
 import linear_std
