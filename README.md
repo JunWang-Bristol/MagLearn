@@ -61,7 +61,7 @@ This absolute path structure is designed to accommodate large datasets stored on
 2. **Local Compute**:
     - Ensure a CUDA-compatible GPU is available.
     - Install necessary CUDA packages.
-    - Run `batch_training.ipynb` and verify CUDA GPU recognition.
+    - Run `batch_training.ipynb`, ensuring the correct 'data_dir' is used.
 
 ## Transfer Learning
 
