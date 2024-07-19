@@ -5,7 +5,7 @@ MagLearn is a Python library designed for predicting volumetric power loss from 
 
 ## Features
 
-- Sequence-to-scalar prediction of volumetric power loss.
+- Sequence-to-scalar prediction of volumetric power loss from B timeseries, temperature and flux frequency. 
 - Data preprocessing for standardizing and splitting datasets.
 - Training pipeline compatible with both local machines and Google Colab.
 - Model verification and error analysis.
@@ -34,7 +34,7 @@ This absolute path structure is designed to accommodate large datasets stored on
 
 ## Data Preprocessing
 
-1. Place the raw data in the following structure, refer to example_material for csv format of each dataset:
+1. Place the raw data in the following structure, refer to example_material for csv format of each material dataset:
     ```
     raw_data_path >
         Material_0
@@ -81,6 +81,10 @@ This absolute path structure is designed to accommodate large datasets stored on
 
 - Trained weights saved in the `Trained Weights` subfolder.
 - Verification results saved as `model_errors.csv` and error histograms in the `Validation` subfolder.
+
+## Cite As
+
+[Insert reccomended citation here]
 
 ## References
 
