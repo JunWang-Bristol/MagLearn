@@ -20,7 +20,7 @@ def MagLoss(
     B_waveform,
     Temp,
     Freq,
-    model_saved_name="model_colab.ckpt",
+    model_saved_name,
     dataset_path=r"data\std_dataset",
     plot=False,
     ):
@@ -36,7 +36,7 @@ def MagLoss(
     std_loss.load(dataset_path+r"\std_loss.stdd")
 
 
-    # Check if CUDA is available and if so, set the device to GPU
+    # Set device to CPU
     device = torch.device("cpu")
     print("Device using ", device)
 
@@ -66,7 +66,7 @@ def MagLoss(
         b_buff[i]=b
     magData.b=b_buff
 
-    # standardize ###############################################################
+    # standardize
     magData.b=std_b.std(magData.b)
     magData.freq=std_freq.std(magData.freq)
     magData.temp=std_temp.std(magData.temp)
