@@ -1,5 +1,8 @@
 /__pycache__
-.ipynb_checkpoints
-.stdd
-.mat
-.pyc
+*.ipynb_checkpoints
+*.stdd
+*.mat
+*.pyc
+*.ckpt
+*.png
+*.pdf
