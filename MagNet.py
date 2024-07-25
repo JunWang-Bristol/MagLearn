@@ -21,24 +21,13 @@ def MagLoss(
     Temp,
     Freq,
     model_saved_name,
-    dataset_path=r"data\std_dataset",
+    dataset_path="",
     plot=False,
+    function_use="valid"
     ):
-
-    std_b = linear_std.linear_std()
-    std_freq = linear_std.linear_std()
-    std_temp = linear_std.linear_std()
-    std_loss = linear_std.linear_std()
-
-    std_b.load(dataset_path+r"\std_b.stdd")
-    std_freq.load(dataset_path+r"\std_freq.stdd")
-    std_temp.load(dataset_path+r"\std_temp.stdd")
-    std_loss.load(dataset_path+r"\std_loss.stdd")
-
 
     # Set device to CPU
     device = torch.device("cpu")
-    print("Device using ", device)
 
     # Instantiate the model with appropriate dimensions
     model = NW_LSTM.get_global_model().to(device)
@@ -46,7 +35,21 @@ def MagLoss(
     # load model from ckpt file
     model.load_state_dict(torch.load(model_saved_name, map_location=device))
     
-
+    # Load standardisation params
+    std_b = linear_std.linear_std()
+    std_freq = linear_std.linear_std()
+    std_temp = linear_std.linear_std()
+    std_loss = linear_std.linear_std()
+    if dataset_path == "":
+        std_b.k, std_b.b = model.std_b
+        std_freq.k, std_freq.b = model.std_freq
+        std_temp.k, std_temp.b = model.std_temp
+        std_loss.k, std_loss.b = model.std_loss
+    else:
+        std_b.load(dataset_path+r"\std_b.stdd")
+        std_freq.load(dataset_path+r"\std_freq.stdd")
+        std_temp.load(dataset_path+r"\std_temp.stdd")
+        std_loss.load(dataset_path+r"\std_loss.stdd")
 
     magData = Maglib.MagLoader()
     magData.b=np.array(B_waveform)
@@ -79,19 +82,47 @@ def MagLoss(
 
     idx = 0
     dataNums = magData.freq.shape[0]
-    if(dataNums>2000):dataNums=2000 # no more than 2000
+    #if(dataNums>2000):dataNums=2000 # no more than 2000
 
     with torch.no_grad():
         x_data = x_data[idx:idx + dataNums, :, :]
         # Now we can pass a batch of sequences through the model
         inputs = torch.tensor(x_data, dtype=torch.float32)
-
-        outputs = model(inputs)
+        if function_use=="randomise":
+            outputs = model(inputs)
+        else:
+            outputs = model.valid(inputs)
         outputs = outputs.detach().numpy()
         outputs = std_loss.unstd(outputs)
     return outputs
 
-def Mag_plot(material_name,relative_error,save_path=""):
+def MagLoss_shiftflip(
+    B_waveform,
+    Temp,
+    Freq,
+    model_saved_name,
+    dataset_path = '',
+    test_num=100,
+    ):
+
+    pred_losses=np.zeros((Freq.shape[0],test_num))
+    for i in range(test_num):
+        pred_losses[:,i:i+1] = MagLoss(
+        B_waveform,
+        Temp,
+        Freq,
+        model_saved_name,
+        dataset_path,
+        function_use="randomise",
+        )
+
+    pred_loss_avg=np.mean(pred_losses,axis=1)
+    pred_loss_avg=pred_loss_avg[:,np.newaxis]
+    return pred_loss_avg
+
+
+
+def Mag_plot(material_name,relative_error,save_path="",xlim=50):
 
     plt.figure(figsize=(6,3),dpi=300)
     # change to timesnewroman font

@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import matplotlib.pyplot as plt
 
 
 class LSTMSeq2One(nn.Module):
@@ -34,12 +35,79 @@ class LSTMSeq2One(nn.Module):
         self.elu = nn.ELU()
         self.sigmoid = nn.Sigmoid()
 
+        # Default Standardisation Coefficients
+        self.std_b = (1.0, 0.0)
+        self.std_freq = (1.0, 0.0)
+        self.std_loss = (1.0, 0.0)
+        self.std_temp = (1.0, 0.0)
+
 
     def forward(self, x):
 
-        in_b=x[:,:,0:1]
-        in_freq=x[:,0,1]
-        in_temp=x[:,0,2]
+        with torch.no_grad():
+            in_b=x[:,:,0:1]
+            in_freq=x[:,0,1]
+            in_temp=x[:,0,2]
+
+            # random wave shift
+            rand = torch.randint(in_b.shape[1],(in_b.shape[0],1))
+            # copy a tensor in_b
+            in_b_buff = in_b.clone()
+
+            # random shift
+            for i in range(in_b.shape[0]):
+                in_b[i, :] = torch.roll(in_b_buff[i, :], shifts=int(rand[i]), dims=0)
+
+            # random flip vertically and horizontally
+            for i in range(in_b.shape[0]):
+                # flip vertically
+                if torch.rand(1) > 0.5:
+                    pass
+                    in_b[i, :, :] = -in_b[i, :, :]
+                # flip horizontally
+                if torch.rand(1) > 0.5:
+                    pass
+                    in_b[i, :, :] = torch.flip(in_b[i, :, :], [0])
+
+        # lstm layer
+        out, _ = self.lstm(in_b)
+        out = out[:, -1, :]  # get the last output of the sequence
+        
+
+        out_wave = torch.zeros(out.shape[0], out.shape[1] + 2, device=x.device)
+        out_wave[:, 0:out.shape[1]] = out
+        out_wave[:, -2] = in_freq
+        out_wave[:, -1] = in_temp
+        out=out_wave
+
+
+        # fully connected layers
+        out = (self.fc1(out))
+        out = self.elu(self.fc2(out)) # sigmoid for output between 0 and 1
+        out = self.elu(self.fc3(out))
+        out = self.elu(self.fc4(out))
+        out = self.elu(self.fc5(out))
+        out = self.elu(self.fc6(out))
+        out = (self.fc7(out))
+        out = self.fc8(out)
+
+
+        # # plot all in_b
+        # for i in range(in_b.shape[0]):
+        #     plt.figure()
+        #     plt.plot(in_b[i].cpu().numpy())
+        #     plt.show()
+
+
+        return out
+
+
+    def valid(self, x):
+
+        with torch.no_grad():
+            in_b=x[:,:,0:1]
+            in_freq=x[:,0,1]
+            in_temp=x[:,0,2]
 
 
         # lstm layer
@@ -64,7 +132,31 @@ class LSTMSeq2One(nn.Module):
         out = (self.fc7(out))
         out = self.fc8(out)
 
+
+        # # plot all in_b
+        # for i in range(in_b.shape[0]):
+        #     plt.figure()
+        #     plt.plot(in_b[i].cpu().numpy())
+        #     plt.show()
         return out
+    
+    def state_dict(self, *args, **kwargs):
+        # Get the base state dict from nn.Module
+        base_state_dict = super().state_dict(*args, **kwargs)
+        base_state_dict['std_b'] = self.std_b
+        base_state_dict['std_freq'] = self.std_freq
+        base_state_dict['std_loss'] = self.std_loss
+        base_state_dict['std_temp'] = self.std_temp
+        return base_state_dict
+
+    def load_state_dict(self, state_dict, strict=True):
+        # Extract custom variables from the state dict
+        self.std_b = state_dict.pop('std_b', (1.0, 0.0))
+        self.std_freq = state_dict.pop('std_freq', (1.0, 0.0))
+        self.std_loss = state_dict.pop('std_loss', (1.0, 0.0))
+        self.std_temp = state_dict.pop('std_temp', (1.0, 0.0))
+        # Load the remaining state dict into the model
+        super().load_state_dict(state_dict, strict)
 
 
 def get_global_model():
