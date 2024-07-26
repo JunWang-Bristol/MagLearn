@@ -90,8 +90,8 @@ The `deploy.ipynb` script provides a straightforward way to deploy the model, ha
 
 ## Cite As
 
-[Insert reccomended citation here]
+MagLearn - University of Bristol 2024
 
 ## References
 
-[Specify References Here]
+MagNet Challenge 2023 https://github.com/minjiechen/magnetchallenge
