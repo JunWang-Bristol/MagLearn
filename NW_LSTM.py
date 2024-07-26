@@ -49,25 +49,14 @@ class LSTMSeq2One(nn.Module):
             in_freq=x[:,0,1]
             in_temp=x[:,0,2]
 
-            # random wave shift
-            rand = torch.randint(in_b.shape[1],(in_b.shape[0],1))
-            # copy a tensor in_b
-            in_b_buff = in_b.clone()
+        # Random wave shift
+        batch_size, seq_len, _ = in_b.shape
+        rand_shifts = torch.randint(seq_len, (batch_size, 1, 1), device=x.device)
+        in_b = torch.cat([in_b[i].roll(shifts=int(rand_shifts[i].item()), dims=0).unsqueeze(0) for i in range(batch_size)], dim=0)
 
-            # random shift
-            for i in range(in_b.shape[0]):
-                in_b[i, :] = torch.roll(in_b_buff[i, :], shifts=int(rand[i]), dims=0)
-
-            # random flip vertically and horizontally
-            for i in range(in_b.shape[0]):
-                # flip vertically
-                if torch.rand(1) > 0.5:
-                    pass
-                    in_b[i, :, :] = -in_b[i, :, :]
-                # flip horizontally
-                if torch.rand(1) > 0.5:
-                    pass
-                    in_b[i, :, :] = torch.flip(in_b[i, :, :], [0])
+        # Random flip vertically and horizontally
+        vertical_flip_mask = torch.rand(batch_size, 1, 1, device=x.device) > 0.5
+        in_b = torch.where(vertical_flip_mask, -in_b, in_b)
 
         # lstm layer
         out, _ = self.lstm(in_b)
