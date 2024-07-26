@@ -45,7 +45,7 @@ For each material:
 
 - The script uses `maglib.py` to import the raw data to the workspace. `dataTransform()` then resamples the H timeseries to 128 samples and standardizes the temperature, volumetric losses, and H timeseries to the minimum and maximum values of the entire material training dataset. This means that each sample H timeseries is not normalized to the minimum and maximum within that time series but to the global minimum and maximum points of all sampled timeseries for the material. This standardized data is then combined and exported as `data_processed.mat` into the directory specified by `{data_dir}/’Processed Training Data’/{Material}/` along with the scaling factors used for the standardizations, which will be referenced later in the training and validation pipelines. These scaling factors are saved as four `.STDD` files corresponding to each datatype.
 
-![Figure 1](Example Downsample Plot.png)
+![Figure 1](Example_Downsample_Plot.png)
 
 - Next, `dataSplit()` will randomly split the same standardized data into training, validation, and testing sets for the training pipeline in a default respective 70:20:10 ratio. To use a custom ratio, simply define them in `batch_pre_process.ipynb` as a 3-element vector passed into a third argument when calling `dataSplit()`. `dataSplit()` then exports these 3 randomly split datasets as `.mat` data files into the same directory used for `data_processed.mat`.
 
@@ -83,7 +83,7 @@ This verification dataset was separated from the testing and training samples in
 
 The distribution in the absolute error between predicted and actual core losses for each sample is then plotted using `Mag_plot()` from `MagNet.py` and key measures of spread are calculated. An example error distribution for N87 is seen in Figure 1 below showing the mean, 95 percentile, 99 percentile, and maximum error from the verification dataset.
 
-![Figure 2](Example Validation Histogram.pdf)
+![Figure 2](Example_Validation_Histogram.pdf)
 
 The script also compiles and exports a summary of mean, 95, and 99 percentile errors for all the materials being validated in the directory. This summary is exported as `model_errors.csv` in the ‘{data_dir}/Validation’ space next to the error histograms for each material.
 
