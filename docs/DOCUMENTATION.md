@@ -83,7 +83,7 @@ This verification dataset was separated from the testing and training samples in
 
 The distribution in the absolute error between predicted and actual core losses for each sample is then plotted using `Mag_plot()` from `MagNet.py` and key measures of spread are calculated. An example error distribution for N87 is seen in Figure 1 below showing the mean, 95 percentile, 99 percentile, and maximum error from the verification dataset.
 
-![Figure 2](Example_Validation_Histogram.pdf)
+![Figure 2](Example_Validation_Histogram.png)
 
 The script also compiles and exports a summary of mean, 95, and 99 percentile errors for all the materials being validated in the directory. This summary is exported as `model_errors.csv` in the ‘{data_dir}/Validation’ space next to the error histograms for each material.
 
