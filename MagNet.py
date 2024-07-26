@@ -10,7 +10,6 @@ from os.path import join
 import matplotlib.pyplot as plt
 
 import NW_LSTM
-
 import Maglib
 import linear_std
 
@@ -82,7 +81,6 @@ def MagLoss(
 
     idx = 0
     dataNums = magData.freq.shape[0]
-    #if(dataNums>2000):dataNums=2000 # no more than 2000
 
     with torch.no_grad():
         x_data = x_data[idx:idx + dataNums, :, :]
