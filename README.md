@@ -77,10 +77,16 @@ This absolute path structure is designed to accommodate large datasets stored on
     - Plots error distribution and exports error metrics.
     - Uses a maximum of 2000 samples from the validation dataset by default, adjustable by changing `max_samples`.
 
-## Output
+Output:
 
 - Trained weights saved in the `Trained Weights` subfolder.
 - Verification results saved as `model_errors.csv` and error histograms in the `Validation` subfolder.
+
+## Loss Inference
+
+The model can be deployed to predict core loss densities using the `MagNet.MagLoss_shiftflip()` function, which utilizes a model checkpoint, B waveform, temperature, and waveform frequency. This function ensures robustness to phase-shifted input data by performing inference multiple times, randomly shifting and flipping the B waveform.
+
+The `deploy.ipynb` script provides a straightforward way to deploy the model, handling waveform timeseries import from a CSV file along with setting the temperature and frequency.
 
 ## Cite As
 
