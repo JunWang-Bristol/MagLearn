@@ -8,6 +8,7 @@ import scipy.io as sio
 
 import NW_LSTM 
 import NN_DataLoader
+import linear_std
 
 def train_model(
         data_dir,
@@ -33,18 +34,33 @@ def train_model(
 
     # Load the pre-trained model if specified
     if base_model_path != '':
-        model.load_state_dict(torch.load(base_model_path))
+        model.load_state_dict(torch.load(base_model_path, map_location=torch.device(device)))
         print("Pre-trained model loaded")
+
+    # Encode database specific standardisation coeffs to model .ckpt for use in future inferrence
+    std_b = linear_std.linear_std()
+    std_freq = linear_std.linear_std()
+    std_temp = linear_std.linear_std()
+    std_loss = linear_std.linear_std()
+    std_b.load(os.path.join(training_data_dir, material, "std_b.stdd"))
+    std_freq.load(os.path.join(training_data_dir, material, "std_freq.stdd"))
+    std_temp.load(os.path.join(training_data_dir, material, "std_temp.stdd"))
+    std_loss.load(os.path.join(training_data_dir, material, "std_loss.stdd"))
+    model.std_b = (std_b.k, std_b.b)
+    model.std_freq = (std_freq.k, std_freq.b)
+    model.std_temp = (std_temp.k, std_temp.b)
+    model.std_loss = (std_loss.k, std_loss.b)
+
 
     # Define the loss function and optimizer
     # loss_fn = nn.MSELoss()
     loss_fn = NW_LSTM.RelativeLoss()
     # loss_fn = NW_LSTM.RelativeLoss_abs()
     optimizer = optim.AdamW(model.parameters(), lr=1e-4)
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=100, eta_min=0, last_epoch=-1)
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=200, eta_min=0, last_epoch=-1)
 
     # Get training data loader
-    train_dataloader = NN_DataLoader.get_dataLoader(os.path.join(training_data_dir, material, "train.mat"), batch_size=valid_batch_size)
+    train_dataloader = NN_DataLoader.get_dataLoader(os.path.join(training_data_dir, material, "train.mat"), batch_size=128)
 
     # Get validation data loader
     valid_dataloader = NN_DataLoader.get_dataLoader(os.path.join(training_data_dir, material, "valid.mat"), batch_size=valid_batch_size)
