@@ -4,7 +4,7 @@
 
 MagLearn is a Python library designed for predicting volumetric power loss from magnetic materials using the MagNet dataset. The library leverages PyTorch with CUDA for training and model verification.
 
-[MagNet Challenge](https://github.com/minjiechen/magnetchallenge)
+[MagNet Challenge 2023](https://github.com/minjiechen/magnetchallenge)
 
 Paper: [MagLearn – Data-driven Machine Learning Framework with Transfer and Few-shot Training for Modeling Magnetic Core Loss](https://ieeexplore.ieee.org/document/10751860)
 
