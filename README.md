@@ -6,7 +6,7 @@ MagLearn is a Python library designed for predicting volumetric power loss from 
 
 [MagNet Challenge 2023](https://github.com/minjiechen/magnetchallenge)
 
-Paper: [MagLearn – Data-driven Machine Learning Framework with Transfer and Few-shot Training for Modeling Magnetic Core Loss](https://ieeexplore.ieee.org/document/10751860)
+Paper: [MagLearn – Data-driven Machine Learning Framework with Transfer and Few-shot Training for Modeling Magnetic Core Loss](https://research-information.bris.ac.uk/en/publications/maglearn-data-driven-machine-learning-framework-with-transfer-and)
 
 ## Features
 
