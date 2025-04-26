@@ -1,27 +1,7 @@
 
-# MagLearn
+# Pipeline
 
-## Award-winning solution to MagNet Challenge 2023 (3rd Place Model Performance)
-
-MagLearn is a Python library designed for predicting volumetric power loss from magnetic materials using the MagNet dataset. The library leverages PyTorch with CUDA for training and model verification.
-
-[MagNet Challenge 2023](https://github.com/minjiechen/magnetchallenge)
-
-Paper: [MagLearn – Data-driven Machine Learning Framework with Transfer and Few-shot Training for Modeling Magnetic Core Loss](https://research-information.bris.ac.uk/en/publications/maglearn-data-driven-machine-learning-framework-with-transfer-and)
-
-## Features
-
-- Sequence-to-scalar prediction of volumetric power loss from B timeseries, temperature and flux frequency. 
-- Data preprocessing for standardizing and splitting datasets.
-- Training pipeline compatible with both local machines and Google Colab.
-- Model verification and error analysis.
-
-## Requirements
-
-- Python 3.x
-- PyTorch with CUDA
-- Anaconda (Optional if you have already installed your project's environment)
-
+This project implements an end-to-end pipeline for predicting power loss from raw measurements of magnetic flux density, frequency and temperature. It is structured into three stages: data pre-processing, model training, and performance verification.
 
 ## Key Files
 
@@ -110,11 +90,3 @@ In each material subfolder:
 
 - Plot of error distributions in the `plot` subfolder.
 - The trained model checkpoint `model_colab.ckpt`.
-
-## Cite As
-
-MagLearn - University of Bristol 2024
-
-## References
-
-MagNet Challenge 2023 https://github.com/minjiechen/magnetchallenge
