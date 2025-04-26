@@ -22,6 +22,11 @@ Paper: [MagLearn – Data-driven Machine Learning Framework with Transfer and Fe
 - PyTorch with CUDA
 - Anaconda (Optional if you have already installed your project's environment)
 
+## Overview 
+
+This figure illustrates an example inference workflow: the trained model takes the preprocessed B waveform together with scalar frequency and temperature inputs, and outputs the predicted volumetric power loss.
+
+![Pipeline Overview](<Pipeline Overview-1.jpg>)
 
 ## Depolyment
 
