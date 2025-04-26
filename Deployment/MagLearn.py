@@ -20,7 +20,7 @@ def MagLoss(
     B_waveform,
     Temp,
     Freq,
-    model_saved_name="model_colab.ckpt",
+    model_saved_name="model.ckpt",
     dataset_path=r"data\std_dataset",
     function_use="valid"
     ):
@@ -99,7 +99,7 @@ def MagLoss_percise(
     B_waveform,
     Temp,
     Freq,
-    model_saved_name="model_colab.ckpt",
+    model_saved_name="model.ckpt",
     dataset_path=r"data\std_dataset",
     test_num=100,
     ):
@@ -120,7 +120,7 @@ def MagLoss_percise(
 
 
 
-def Mag_plot(material_name,relative_error,save_path="",xlim=50):
+def Mag_plot(material_name,relative_error,save_path="",xlim=None):
 
     plt.figure(figsize=(6,3),dpi=300)
     # change to timesnewroman font
