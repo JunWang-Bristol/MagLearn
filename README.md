@@ -59,6 +59,14 @@ The Pipeline encompasses the entire workflow, including:
 
 MagLearn - University of Bristol 2024
 
+## Credits
+- Arthur Zhang
+- Jingrong Yang
+- Ossian Sydow Elias
+- Jun Wang
+- Song Liu
+- Tom Mckeague
+
 ## References
 
 MagNet Challenge 2023 https://github.com/minjiechen/magnetchallenge
