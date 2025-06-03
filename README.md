@@ -26,7 +26,7 @@ Paper: [MagLearn – Data-driven Machine Learning Framework with Transfer and Fe
 
 This figure illustrates an example inference workflow: the trained model takes the preprocessed B waveform together with scalar frequency and temperature inputs, and outputs the predicted volumetric power loss.
 
-![Pipeline Overview](<Document/Pipeline Overview.jpg>)
+<img src="Document/Pipeline Overview.jpg" alt="Pipeline Overview" width="600"/>
 
 ## Depolyment
 
